@@ -7,7 +7,17 @@ import "./index.css";
 onAuthChange();
 
 function App() {
-  const [qrResult, setQrResult] = useState("null");
+  // const [email, setEmail] = useState("");
+  // const [displayName, setDisplayName] = useState("");
+  // const [photoURL, setPhotoURL] = useState("");
+  // const [registeredOrg, setRegisteredOrg] = useState(false);
+  const [qrResult, setQrResult] = useState({
+    orgName: "null",
+    orgManager: "null",
+  });
+  const orgConfirm = () => {
+    console.log("Button Clicked and registered to " + qrResult);
+  };
   return (
     <>
       <Signin loginGoogle={loginGoogle} />
@@ -20,6 +30,8 @@ function App() {
       </div>
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
         <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-xl">{qrResult.orgName}</h3>
+          <h3 className="text-md mb-4">{qrResult.orgManager}</h3>
           <div className="alert alert-warning">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -35,14 +47,15 @@ function App() {
               />
             </svg>
             <span>
-              You are about to register to {qrResult}
-              <br></br>Do you want to continue? You are not allowed to register
-              to another Org after confirming
+              Are you sure you want to register to this Org?<br></br>You're not
+              allowed to register again after confirming
             </span>
           </div>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-primary">Confirm</button>
+            <button className="btn btn-primary" onClick={orgConfirm}>
+              Register
+            </button>
             <button className="btn">Close</button>
           </div>
         </form>
@@ -50,7 +63,7 @@ function App() {
       <div>
         <QrScanner
           onDecode={(result) => {
-            setQrResult(result);
+            setQrResult(JSON.parse(result));
             console.log(result);
             if (document) {
               (
