@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { auth } from "./Firebase";
+import { auth, db } from "./Firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 
 export function Dashboard() {
@@ -11,11 +12,27 @@ export function Dashboard() {
   });
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [uid, setUid] = useState(null);
   const [photoUrl, setPhotoUrl] = useState("");
+  const [registered, setRegistered] = useState(false);
+  const [orgName, setOrgName] = useState(null);
   const [showQr, setShowQr] = useState(false);
   const navigate = useNavigate();
   const orgConfirm = () => {
+    setOrgName(qrResult.orgName);
     console.log("Button Clicked and registered to " + qrResult.orgName);
+    setDoc(doc(db, "orgs", qrResult.orgName, "members", uid), {
+      email: email,
+      name: name,
+    });
+    setDoc(doc(db, "users", uid), {
+      email: email,
+      name: name,
+      registered: true,
+      orgName: qrResult.orgName,
+    });
+    setRegistered(true);
+    setShowQr(false);
   };
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -23,8 +40,16 @@ export function Dashboard() {
         setEmail(user.email);
         setName(user.displayName);
         setPhotoUrl(user.photoURL);
+        setUid(user.uid);
         setShowQr(true);
-        console.log(user);
+        getDoc(doc(db, "users", user.uid)).then((docSnap) => {
+          if (docSnap.exists()) {
+            setRegistered(docSnap.data().registered);
+            setOrgName(docSnap.data().orgName);
+          } else {
+            setRegistered(false);
+          }
+        });
       } else {
         navigate("/login", { replace: true });
       }
@@ -48,8 +73,7 @@ export function Dashboard() {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[10] p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li className="pl-2 pt-1 text-lg font-bold">{name}</li>
-              <li className="pl-2 pt-1 text-sm">{email}</li>
+              <li className="pl-2 pr-4 pt-1 text-lg font-bold">{name}</li>
               <li>
                 <button
                   onClick={() => {
@@ -95,7 +119,7 @@ export function Dashboard() {
         </form>
       </dialog>
       <div>
-        {showQr ? (
+        {showQr && !registered ? (
           <QrScanner
             onDecode={(result) => {
               setQrResult(JSON.parse(result));
@@ -110,9 +134,31 @@ export function Dashboard() {
             }}
             scanDelay={500}
           />
-        ) : (
-          <></>
-        )}
+        ) : null}
+      </div>
+      <div>
+        {registered ? (
+          <>
+            <div className="px-10 mt-10">
+              <div className="alert alert-success">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>Registered to {orgName}</span>
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </>
   );
