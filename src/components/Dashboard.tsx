@@ -29,6 +29,19 @@ export function Dashboard() {
     });
     setRegistered(true);
     setShowQr(false);
+
+    const formData = new FormData();
+    formData.append("Name", name);
+    formData.append("Email", email);
+    formData.append("Org", qrResult.orgName);
+
+    fetch(
+      "https://script.google.com/macros/s/AKfycbwvswAO-stZMUzqF5XkHJhta1UPhjwBEeCGxhsQhQPAY0gEZL3QQ365z74Jr7fvOS6CGg/exec",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
   };
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -65,7 +78,7 @@ export function Dashboard() {
                 <img src={photoUrl} alt="" />
               </div>
             </label>
-            <ul 
+            <ul
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[10] p-2 shadow bg-base-100 rounded-box w-52"
             >

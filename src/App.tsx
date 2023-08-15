@@ -4,6 +4,7 @@ import { Login } from "./components/Login";
 
 import "./index.css";
 import { Dashboard } from "./components/Dashboard";
+import { Admin } from "./components/Admin";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Dashboard />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>
     </>
