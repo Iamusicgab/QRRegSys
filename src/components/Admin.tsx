@@ -6,7 +6,7 @@ export function Admin() {
   const [org, setOrg] = useState("");
   const [error, setError] = useState("");
 
-  function handleSubmit(e: any) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData();
     formData.append("Name", name);
@@ -65,6 +65,7 @@ export function Admin() {
             onChange={(e) => setOrg(e.target.value)}
             value={org}
           >
+            <option>Orgs...</option>
             <option>Ad Lib (A&D)</option>
             <option>AM Cafe</option>
             <option>Basketball</option>
@@ -74,7 +75,7 @@ export function Admin() {
             <option>Eskapo (Mountaineering)</option>
             <option>Football</option>
             <option>Greywolves</option>
-            <option>Braga Band and Braga Chorale</option>
+            <option>Music Club</option>
             <option>Praxis (HUMSS Org)</option>
             <option>Reps for Jesus (Fitness)</option>
             <option>Rover Scouts</option>
@@ -82,7 +83,7 @@ export function Admin() {
             <option>Table Top</option>
             <option>Tech Team Math (STEM Org)</option>
             <option>Tech Team Science (STEM Org)</option>
-            <option>Tech Team Technology (STEM Org)</option>
+            <option>Robotics (STEM Org)</option>
             <option>Test Tubes (Film-making)</option>
             <option>Volleyball</option>
             <option>Youth Power</option>

@@ -14,7 +14,7 @@ export function Dashboard() {
   const [name, setName] = useState("");
   const [uid, setUid] = useState(null);
   const [photoUrl, setPhotoUrl] = useState("");
-  const [registered, setRegistered] = useState(false);
+  const [registered, setRegistered] = useState(true);
   const [orgName, setOrgName] = useState(null);
   const [showQr, setShowQr] = useState(false);
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export function Dashboard() {
         setShowQr(true);
         getDoc(doc(db, "users", user.uid)).then((docSnap) => {
           if (docSnap.exists()) {
-            setRegistered(docSnap.data().registered);
+            setRegistered(true);
             setOrgName(docSnap.data().orgName);
           } else {
             setRegistered(false);
@@ -63,7 +63,7 @@ export function Dashboard() {
         navigate("/login", { replace: true });
       }
     });
-  }, []);
+  });
 
   return (
     <>
