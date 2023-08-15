@@ -16,7 +16,7 @@ export function Dashboard() {
   const [photoUrl, setPhotoUrl] = useState("");
   const [registered, setRegistered] = useState(true);
   const [orgName, setOrgName] = useState(null);
-  const [showQr, setShowQr] = useState(false);
+  const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
   const orgConfirm = () => {
     setOrgName(qrResult.orgName);
@@ -28,7 +28,6 @@ export function Dashboard() {
       orgName: qrResult.orgName,
     });
     setRegistered(true);
-    setShowQr(false);
 
     const formData = new FormData();
     formData.append("Name", name);
@@ -50,13 +49,14 @@ export function Dashboard() {
         setName(user.displayName);
         setPhotoUrl(user.photoURL);
         setUid(user.uid);
-        setShowQr(true);
         getDoc(doc(db, "users", user.uid)).then((docSnap) => {
           if (docSnap.exists()) {
             setRegistered(true);
             setOrgName(docSnap.data().orgName);
+            setLoading("hidden");
           } else {
             setRegistered(false);
+            setLoading("hidden");
           }
         });
       } else {
@@ -82,7 +82,7 @@ export function Dashboard() {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[10] p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li className="pl-2 pr-4 pt-1 text-lg font-bold">{name}</li>
+              <li className="pl-2 pr-4 pt-1 mb-2 text-lg font-bold">{name}</li>
               <li>
                 <button
                   onClick={() => {
@@ -95,6 +95,13 @@ export function Dashboard() {
             </ul>
           </div>
         </div>
+      </div>
+      <div
+        className={
+          "fixed bg-base-100 w-full h-full flex justify-center  " + loading
+        }
+      >
+        <span className="loading loading-spinner text-primary loading-lg"></span>
       </div>
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
         <form method="dialog" className="modal-box">
@@ -128,27 +135,9 @@ export function Dashboard() {
         </form>
       </dialog>
       <div>
-        {showQr && !registered ? (
-          <QrScanner
-            onDecode={(result) => {
-              setQrResult(JSON.parse(result));
-              if (document) {
-                (
-                  document.getElementById("my_modal_5") as HTMLFormElement
-                ).showModal();
-              }
-            }}
-            onError={(error) => {
-              console.log(error);
-            }}
-            scanDelay={500}
-          />
-        ) : null}
-      </div>
-      <div>
         {registered ? (
           <>
-            <div className="px-10 mt-10">
+            <div className="flex flex-col px-10 mt-10">
               <div className="alert alert-success">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -165,9 +154,44 @@ export function Dashboard() {
                 </svg>
                 <span>Registered to {orgName}</span>
               </div>
+              <div className="alert alert-info mt-5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span>
+                  For any concerns, proceed to the Registration Inquiry Booth
+                </span>
+              </div>
             </div>
           </>
-        ) : null}
+        ) : (
+          <div className="">
+            <QrScanner
+              onDecode={(result) => {
+                setQrResult(JSON.parse(result));
+                if (document) {
+                  (
+                    document.getElementById("my_modal_5") as HTMLFormElement
+                  ).showModal();
+                }
+              }}
+              onError={(error) => {
+                console.log(error);
+              }}
+              scanDelay={500}
+            />
+          </div>
+        )}
       </div>
     </>
   );
