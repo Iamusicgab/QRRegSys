@@ -21,10 +21,6 @@ export function Dashboard() {
   const orgConfirm = () => {
     setOrgName(qrResult.orgName);
     console.log("Button Clicked and registered to " + qrResult.orgName);
-    setDoc(doc(db, "orgs", qrResult.orgName, "members", uid), {
-      email: email,
-      name: name,
-    });
     setDoc(doc(db, "users", uid), {
       email: email,
       name: name,
@@ -66,10 +62,10 @@ export function Dashboard() {
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
-                <img src={photoUrl} />
+                <img src={photoUrl} alt="" />
               </div>
             </label>
-            <ul
+            <ul 
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[10] p-2 shadow bg-base-100 rounded-box w-52"
             >
