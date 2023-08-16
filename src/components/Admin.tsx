@@ -87,7 +87,7 @@ export function Admin() {
             <option>Test Tubes (Film-making)</option>
             <option>Volleyball</option>
             <option>Youth Power</option>
-            <option>Braga Dance Crew</option>
+            <option>Wolfpack</option>
           </select>
           <input className="btn btn-primary" type="submit" />
         </form>
